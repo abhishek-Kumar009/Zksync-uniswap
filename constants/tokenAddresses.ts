@@ -1,0 +1,2 @@
+export const Sapphire = "0xB61d5455952F52F0d65b92A1644DD90320c4E0dd";
+export const Emerald = "0xF8DBA9dCBe319de73c2C13CF22f30CB290dF4D10";
