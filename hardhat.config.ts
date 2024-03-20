@@ -6,13 +6,21 @@ import "@matterlabs/hardhat-zksync-solc";
 import "@matterlabs/hardhat-zksync-verify";
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "zkLinkNova",
+  defaultNetwork: 'inMemoryNode',
   networks: {
-    zkLinkNova: {
-      url: "https://goerli.rpc.zklink.io",
+    hardhat: {
       zksync: true,
-      ethNetwork: "goerli",
-      verifyURL: 'https://goerli.explorer.zklink.io/contracts/verify'
+    },
+    inMemoryNode: {
+      url: "http://127.0.0.1:8011",
+      ethNetwork: "localhost", // in-memory node doesn't support eth node; removing this line will cause an error
+      zksync: true,
+    },
+    zklinkGoerli: {
+      url: 'https://goerli.rpc.zklink.io/',
+      ethNetwork: 'goerli',
+      verifyURL: 'https://goerli.explorer.zklink.io/contract_verification',
+      zksync: true,
     },
     zkSyncSepoliaTestnet: {
       url: "https://sepolia.era.zksync.dev",
@@ -32,37 +40,55 @@ const config: HardhatUserConfig = {
       zksync: true,
       verifyURL: "https://zksync2-testnet-explorer.zksync.dev/contract_verification",
     },
-    dockerizedNode: {
-      url: "http://localhost:3050",
-      ethNetwork: "http://localhost:8545",
-      zksync: true,
-    },
-    inMemoryNode: {
-      url: "http://127.0.0.1:8011",
-      ethNetwork: "localhost", // in-memory node doesn't support eth node; removing this line will cause an error
-      zksync: true,
-    },
-    hardhat: {
-      zksync: true,
-    },
   },
   zksolc: {
-    version: "latest",
-    settings: {
-      // find all available options in the official documentation
-      // https://era.zksync.io/docs/tools/hardhat/hardhat-zksync-solc.html#configuration
-    },
+    version: 'latest',
+    settings: {},
+  },
+  mocha: {
+    timeout: 600000,
   },
   solidity: {
     compilers: [
       {
-        version: '0.5.16'
+        version: '0.5.16',
+        settings: {
+          viaIR: true,
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
       },
       {
-        version: '0.6.6'
+        version: '0.6.6',
+        settings: {
+          viaIR: true,
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
       },
       {
-        version: '0.8.20'
+        version: '0.8.20',
+        settings: {
+          viaIR: true,
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+      {
+        version: '0.4.18',
+        settings: {
+          viaIR: true,
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
       }
     ]
   },

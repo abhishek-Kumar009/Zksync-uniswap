@@ -4,7 +4,9 @@ import { deployContract } from "./utils";
 // It will deploy a Greeter contract to selected network
 // as well as verify it on Block Explorer if possible for the network
 export default async function () {
-  const contractArtifactName = "Emerald";
+  const contractArtifactName = "Sapphire";
   const constructorArguments = []; // Put args in quotes
-  await deployContract(contractArtifactName, constructorArguments);
+  await deployContract(contractArtifactName, constructorArguments, {
+    noVerify: false
+  });
 }

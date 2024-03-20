@@ -4,7 +4,9 @@ import { ethers } from "ethers";
 import { Emerald, Sapphire } from "../constants/tokenAddresses";
 
 // Address of the contract to interact with
-const CONTRACT_ADDRESS = "0x343944e27688296D83532379398E401359a13693";
+const CONTRACT_ADDRESS = "0x5d5162972035109F077Ed2Ac4056db779d5e5732"; //Router
+const FACTORY = "0x5bE571BdFFB6F23a50a7A14302A5a9fC8003471b";
+                          
 if (!CONTRACT_ADDRESS)
   throw "⛔️ Provide address of the contract to interact with!";
 
@@ -34,25 +36,46 @@ export default async function () {
     tokenContract2,
     contractArtifactTK2.abi,
     getWallet()
-  )
+  );
 
-  // const approve1 = await token1Contract.approve(CONTRACT_ADDRESS, ethers.parseEther("1000000000"));
-  const approve1 = await token1Contract.allowance("0x1aBeA91c444E43cBf645dB61F4DC09200F0E25b0", "0x343944e27688296D83532379398E401359a13693");
-  // await approve1.wait();
+  // const mint1 = await token1Contract.mint("0x1aBeA91c444E43cBf645dB61F4DC09200F0E25b0", ethers.parseEther("10000000"));
+  // await mint1.wait();
 
-  console.log("allowance  =======>", approve1);
+  // console.log(mint1, "Mint1");
+  
+  // const mint2 = await token2Contract.mint("0x1aBeA91c444E43cBf645dB61F4DC09200F0E25b0", ethers.parseEther("10000000"));
+  // await mint2.wait();
+  // // console.log(mint2, "Mint2");
+
+
+  const approve1 = await token1Contract.approve(CONTRACT_ADDRESS, ethers.parseEther("1000000000"));
+  // // // const approve1 = await token1Contract.allowance("0x1aBeA91c444E43cBf645dB61F4DC09200F0E25b0", CONTRACT_ADDRESS);
+  await approve1.wait();
+
+  console.log("apprve1  =======>", approve1);
+
+  // const bal1 = await token1Contract.balanceOf("0x1aBeA91c444E43cBf645dB61F4DC09200F0E25b0");
+
+  // console.log(parseFloat(bal1)/1e18, "balance1");
+  
+  // const bal2 = await token2Contract.balanceOf("0x1aBeA91c444E43cBf645dB61F4DC09200F0E25b0");
+  // console.log(parseFloat(bal2)/1e18, "balance2");
   
 
-  // const approve2 = await token2Contract.approve(CONTRACT_ADDRESS, ethers.parseEther("1000000000"));
-  const approve2 = await token2Contract.allowance("0x1aBeA91c444E43cBf645dB61F4DC09200F0E25b0", "0x343944e27688296D83532379398E401359a13693");
-  // await approve2.wait();
+  const approve2 = await token2Contract.approve(CONTRACT_ADDRESS, ethers.parseEther("1000000000"));
+  // // // const approve2 = await token2Contract.allowance("0x1aBeA91c444E43cBf645dB61F4DC09200F0E25b0", CONTRACT_ADDRESS);
+  await approve2.wait();
 
-  console.log("allowance done =========>", approve2);
+  console.log("apprive2 done =========>", approve2);
 
-  // Load compiled contract info
+  // // Load compiled contract info
   const contractArtifact = await hre.artifacts.readArtifact(
     "UniswapV2Router02"
   );
+
+  // const fatoryContractArtifact = await hre.artifacts.readArtifact(
+  //   "UniswapV2Factory"
+  // );
 
   // Initialize contract instance for interaction
   const contract = new ethers.Contract(
@@ -61,22 +84,60 @@ export default async function () {
     getWallet() // Interact with the contract on behalf of this wallet
   );
 
-  // console.log(contract.addLiquidity, "Router contract =====>");
+  // const factoryContract = new ethers.Contract(
+  //   FACTORY,
+  //   fatoryContractArtifact.abi,
+  //   getWallet()
+  // );
+
+  // const createPairTx = await factoryContract.createPair(
+  //   Sapphire,
+  //   Emerald
+  // );
+
+  // await createPairTx.wait();
+
+  // console.log(createPairTx, "createPairTx");
+
+  // const pair = await factoryContract.getPair(
+  //   Sapphire,
+  //   Emerald
+  // );
+
+  // console.log(pair, "Pair addresss =====>");
+  
   
 
-  const deadline = "1710669530";
+  // const resp = await factoryContract.INIT_CODE_HASH();
 
-  // Run contract read function
-  const response = await contract.addLiquidityETH(
+  // console.log(resp, "INIT_CODE_HASH factory =====>");
+
+  // const constructorHash = await factoryContract.calculateConstructorInputHash();
+
+  // console.log(constructorHash, "Constructor hash ====>");
+  
+  
+
+  const deadline = "1810946476";
+
+  const currentNonce = await getWallet().getNonce();
+
+  console.log(currentNonce, "Current nonce ====>");
+  
+
+  // // // Run contract read function
+  const response = await contract.addLiquidity(
     Sapphire,
-    ethers.parseEther("500"),
+    Emerald,
+    ethers.parseUnits("100", 18),
+    ethers.parseUnits("20", 18),
     0,
     0,
-    "0xD4B0999f465C7b4F15eB6f709b4793553ab6b99C",
+    getWallet().address,
     deadline,
     {
-      value: ethers.parseEther("0.002"),
-      gasLimit: 500000
+      gasLimit: 1000_000,
+      nonce: currentNonce
     }
   );
 
